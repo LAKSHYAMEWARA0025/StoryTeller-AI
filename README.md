@@ -4,7 +4,7 @@
 
 Transform simple text prompts into fully visualized, multi-panel comic boards complete with native multi-lingual audio narration. Powered by Google Gemini 2.5 Flash and Next.js.
 
-Live Demo: [Insert Vercel Link Here]
+Live Demo: https://story-teller-ai-rust.vercel.app
 
 ---
 
