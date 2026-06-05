@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, TargetAndTransition } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, Play } from 'lucide-react';
 import { ComicPanel } from '../lib/types';
 
 type CameraMotion = 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | 'pan-up' | 'pan-down' | 'static';
@@ -24,6 +24,7 @@ interface ComicBoardProps {
 
 export default function ComicBoard({ panels, language }: ComicBoardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const lastSpokenIndex = useRef(-1);
 
@@ -102,6 +103,8 @@ export default function ComicBoard({ panels, language }: ComicBoardProps) {
   // Strictly locked autoplay — only fires when the user moves to a new panel
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    if (!hasStarted) return;
+
     if (lastSpokenIndex.current !== currentIndex) {
       playAudio();
       lastSpokenIndex.current = currentIndex; // Mark this panel as spoken
@@ -115,13 +118,32 @@ export default function ComicBoard({ panels, language }: ComicBoardProps) {
     };
     // STRICT DEPENDENCY: Only trigger when currentIndex changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
+  }, [currentIndex, hasStarted]);
 
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-5 px-4">
       {/* Cinematic Container */}
       <div className="relative w-full aspect-[4/3] md:aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+
+        {/* Start Overlay */}
+        <AnimatePresence>
+          {!hasStarted && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            >
+              <button
+                onClick={() => setHasStarted(true)}
+                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+              >
+                <Play className="w-6 h-6 fill-white" />
+                Play Comic
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence mode="wait">
           <motion.div

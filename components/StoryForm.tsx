@@ -2,12 +2,17 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import {
+  FORMAT_INTERACTIVE,
+  FORMAT_STATIC,
+} from '../lib/utils/formatAndAspect';
 
 export interface StoryFormData {
   description: string;
   panelCount: number;
   theme: string;
   tone: string;
+  format: string;
 }
 
 interface StoryFormProps {
@@ -25,10 +30,11 @@ export default function StoryForm({ onSubmit, isSubmitting = false }: StoryFormP
   const [panelCount, setPanelCount] = useState<number>(4);
   const [theme, setTheme] = useState('Cyberpunk');
   const [tone, setTone] = useState('Noir');
+  const [format, setFormat] = useState(FORMAT_INTERACTIVE);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ description, panelCount, theme, tone });
+    onSubmit({ description, panelCount, theme, tone, format });
   };
 
   return (
@@ -110,6 +116,23 @@ export default function StoryForm({ onSubmit, isSubmitting = false }: StoryFormP
         </div>
       </div>
 
+      <div className="grid grid-cols-1 gap-5">
+        <div>
+          <label htmlFor="format" className={labelClass}>
+            Format
+          </label>
+          <select
+            id="format"
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            className={`${inputClass} cursor-pointer appearance-none`}
+          >
+            <option value={FORMAT_INTERACTIVE} className="bg-slate-900">{FORMAT_INTERACTIVE}</option>
+            <option value={FORMAT_STATIC} className="bg-slate-900">{FORMAT_STATIC}</option>
+          </select>
+        </div>
+      </div>
+
       {/* Submit button */}
       <motion.button
         type="submit"
@@ -126,3 +149,6 @@ export default function StoryForm({ onSubmit, isSubmitting = false }: StoryFormP
     </form>
   );
 }
+
+
+
